@@ -1,0 +1,66 @@
+﻿<Window x:Class="MongoDbGuiTask1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MongoDbGuiTask1"
+        xmlns:vm="clr-namespace:MongoDbGuiTask1.ViewModel"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:views="clr-namespace:MongoDbGuiTask1.View"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="700" Width="1200"
+        DataContext="{Binding MainViewModel, Mode=OneWay, Source={StaticResource Locator}}">
+    <Window.Resources>
+        <ControlTemplate x:Name="ClickableLabel" x:Key="ContentOnlyTemplate" TargetType="{x:Type Button}">
+            <ContentPresenter />
+        </ControlTemplate>
+        <DataTemplate DataType="{x:Type vm:CategoryViewModel}">
+            <views:CategoryView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:EmployeeViewModel}">
+            <views:EmployeeView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ItemViewModel}">
+            <views:ItemView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:OrderViewModel}">
+            <views:OrderView />
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Name="TreeViewColumn" Width="300" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Name="WorkColumn" Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+        <DockPanel Grid.Column="0" LastChildFill="True" Width="Auto">
+            <TreeView DockPanel.Dock="Left" Name="ItemsTree">
+                <TreeViewItem Name="DatabasesTree" Header="Databases"></TreeViewItem>
+            </TreeView>
+        </DockPanel>
+        <StackPanel x:Name="RigthPanel" Grid.Column="2" Margin="4,0,-5,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <TabControl>
+                <TabItem Header="Все документы" IsSelected="{Binding ListTabSelected}">
+                    <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" ItemsSource="{Binding Entities}" SelectedItem="{Binding SelectedEntity}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <i:InvokeCommandAction Command="{Binding ItemClick}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Shortcut}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </TabItem>
+                <TabItem Header="Выбранный документ" IsSelected="{Binding SingleTabSelected}">
+                    <TabItem.Content>
+                        <ContentPresenter Content="{Binding ChosenEntity}" />
+                    </TabItem.Content>
+                </TabItem>
+            </TabControl>
+        </StackPanel>
+    </Grid>
+</Window>

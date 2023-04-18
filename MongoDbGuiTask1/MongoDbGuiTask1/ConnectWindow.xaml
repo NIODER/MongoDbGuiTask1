@@ -1,0 +1,40 @@
+﻿<Window x:Class="MongoDbGuiTask1.ConnectWindow"
+        x:Name="ConnectWindowView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MongoDbGuiTask1"
+        mc:Ignorable="d"
+        Title="ConnectWindow" Height="200" Width="370">
+    <Grid>
+        <StackPanel>
+            <Label Name="ConnectionLabel"
+                   HorizontalContentAlignment="Center"
+                   Margin="0,10,0,0"
+                   FontFamily="Calibri"
+                   FontSize="16">Подключение</Label>
+            <Label Name="ConnectionStringLabel"
+                   HorizontalContentAlignment="Left"
+                   Margin="15,0,0,0"
+                   FontFamily="Calibri"
+                   FontSize="14">Строка подключения:</Label>
+            <TextBox Name="ConnectionStringTextBox"
+                     HorizontalContentAlignment="Center"
+                     Margin="10,0,10,0"
+                     FontFamily="Calibri"
+                     Height="20"
+                     FontSize="12"
+                     Text="{Binding ConnectionString}"></TextBox>
+            <Button Name="ConnectButton"
+                    HorizontalAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    Margin="0,30,0,0"
+                    FontFamily="Calibri"
+                    Height="25"
+                    Width="100"
+                    Command="{Binding Connect}"
+                    CommandParameter="{Binding ElementName=ConnectWindowView}">Подключиться</Button>
+        </StackPanel>
+    </Grid>
+</Window>
