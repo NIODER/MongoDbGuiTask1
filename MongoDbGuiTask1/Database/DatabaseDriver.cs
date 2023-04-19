@@ -1,4 +1,6 @@
-﻿using MongoDB.Driver;
+﻿using Database.Entities;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using System.Linq.Expressions;
 
 namespace Database
@@ -13,7 +15,7 @@ namespace Database
             _client = new MongoClient(connectionString);
         }
 
-        public string ConnectionString
+        public static string ConnectionString
         {
             get
             {
@@ -35,6 +37,13 @@ namespace Database
             return _client.GetDatabase(databaseName).ListCollectionNames().ToList();
         }
 
+        public long GetCollectionEntitiesCount(string databaseName, string collectionName)
+        {
+            return _client.GetDatabase(databaseName)
+                .GetCollection<DbEntity>(collectionName)
+                .CountDocuments(doc => true);
+        }
+
         public List<DbEntity> GetEntitiesPage<DbEntity>(
             string databaseName,
             string collectionName,
@@ -54,16 +63,18 @@ namespace Database
                 .InsertOne(entity);
         }
 
-        public void UpdateOneEntity<DbEntity>(string databaseName, string collectionName, DbEntity oldEntity, DbEntity newEntity) where DbEntity : Entities.DbEntity
+        public UpdateResult? UpdateOneEntity<DbEntity>(string databaseName, string collectionName, DbEntity entity) where DbEntity : Entities.DbEntity
         {
-            throw new NotImplementedException();
+            return _client.GetDatabase(databaseName)
+                .GetCollection<DbEntity>(collectionName)
+                .UpdateOne(doc => doc.Id == entity.Id, new BsonDocument("$set", entity.ToBsonDocument()));
         }
 
         public void DeleteOneEntity<DbEntity>(string databaseName, string collectionName, DbEntity dbEntity) where DbEntity : Entities.DbEntity
         {
             _client.GetDatabase(databaseName)
                 .GetCollection<DbEntity>(collectionName)
-                .DeleteOne(entity => entity.Equals(dbEntity));
+                .FindOneAndDelete(dbEntity.ToBsonDocument());
         }
     }
 }

@@ -23,5 +23,7 @@ namespace Database.Entities
         {
             get => new("unknown");
         }
+
+        public override bool IsDefault() => this == Default;
     }
 }

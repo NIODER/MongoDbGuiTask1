@@ -32,5 +32,10 @@ namespace Database.Entities
         }
 
         public static Item Default { get => new ("unknown", default, default, "unknown"); }
+
+        public override bool IsDefault()
+        {
+            return this == Default;
+        }
     }
 }

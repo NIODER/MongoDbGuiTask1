@@ -13,5 +13,6 @@ namespace Database.Entities
         [BsonId]
         public ObjectId Id { get; set; }
         public abstract string Shortcut { get; }
+        public abstract bool IsDefault();
     }
 }

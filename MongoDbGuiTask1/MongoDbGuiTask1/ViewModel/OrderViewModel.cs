@@ -4,6 +4,8 @@ namespace MongoDbGuiTask1.ViewModel
 {
     internal class OrderViewModel : ViewModelBase, IEntityViewModel
     {
+        public event DocumentUpdatedEventHandler? DocumentUpdated;
+
         private readonly Order _order;
 
         public OrderViewModel(Order order)
@@ -18,6 +20,7 @@ namespace MongoDbGuiTask1.ViewModel
             {
                 _order.Customer = value;
                 OnPropertyChanged(nameof(Customer));
+                DocumentUpdated?.Invoke();
             }
         }
 
@@ -28,6 +31,7 @@ namespace MongoDbGuiTask1.ViewModel
             {
                 _order.Status = value;
                 OnPropertyChanged(nameof(Status));
+                DocumentUpdated?.Invoke();
             }
         }
 
@@ -38,6 +42,7 @@ namespace MongoDbGuiTask1.ViewModel
             {
                 _order.CategoryId = value;
                 OnPropertyChanged(nameof(CategoryId));
+                DocumentUpdated?.Invoke();
             }
         }
 
@@ -48,6 +53,7 @@ namespace MongoDbGuiTask1.ViewModel
             {
                 _order.ItemId = value;
                 OnPropertyChanged(nameof(ItemId));
+                DocumentUpdated?.Invoke();
             }
         }
 
@@ -58,6 +64,7 @@ namespace MongoDbGuiTask1.ViewModel
             {
                 _order.Quantity = value;
                 OnPropertyChanged(nameof(Quantity));
+                DocumentUpdated?.Invoke();
             }
         }
 
@@ -68,6 +75,7 @@ namespace MongoDbGuiTask1.ViewModel
             {
                 _order.Date = value;
                 OnPropertyChanged(nameof(Date));
+                DocumentUpdated?.Invoke();
             }
         }
 

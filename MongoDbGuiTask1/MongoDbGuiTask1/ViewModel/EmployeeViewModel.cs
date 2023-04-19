@@ -5,6 +5,8 @@ namespace MongoDbGuiTask1.ViewModel
 {
     internal class EmployeeViewModel : ViewModelBase, IEntityViewModel
     {
+        public event DocumentUpdatedEventHandler? DocumentUpdated;
+
 		private readonly Employee _employee;
 
         public EmployeeViewModel([NotNull] Employee employee)
@@ -19,6 +21,7 @@ namespace MongoDbGuiTask1.ViewModel
             {
                 _employee.Name = value;
                 OnPropertyChanged(nameof(Name));
+                DocumentUpdated?.Invoke();
             }
         }
 
@@ -29,6 +32,7 @@ namespace MongoDbGuiTask1.ViewModel
             {
                 _employee.Position = value;
                 OnPropertyChanged(nameof(Position));
+                DocumentUpdated?.Invoke();
             }
         }
 
@@ -39,6 +43,7 @@ namespace MongoDbGuiTask1.ViewModel
             {
                 _employee.Salary = value;
                 OnPropertyChanged(nameof(Salary));
+                DocumentUpdated?.Invoke();
             }
         }
 
@@ -49,6 +54,7 @@ namespace MongoDbGuiTask1.ViewModel
             {
                 _employee.PasswordData = value;
                 OnPropertyChanged(nameof(PasswordData));
+                DocumentUpdated?.Invoke();
             }
         }
 
@@ -59,6 +65,7 @@ namespace MongoDbGuiTask1.ViewModel
             {
                 _employee.Address = value;
                 OnPropertyChanged(nameof(Address));
+                DocumentUpdated?.Invoke();
             }
         }
 
@@ -69,6 +76,7 @@ namespace MongoDbGuiTask1.ViewModel
             {
                 _employee.PhoneNumber = value;
                 OnPropertyChanged(nameof(PhoneNumber));
+                DocumentUpdated?.Invoke();
             }
         }
 
@@ -79,6 +87,7 @@ namespace MongoDbGuiTask1.ViewModel
             {
                 _employee.Email = value;
                 OnPropertyChanged(nameof(Email));
+                DocumentUpdated?.Invoke();
             }
         }
 

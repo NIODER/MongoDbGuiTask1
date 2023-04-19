@@ -6,6 +6,8 @@ namespace MongoDbGuiTask1.ViewModel
 {
     class CategoryViewModel : ViewModelBase, IEntityViewModel
     {
+        public event DocumentUpdatedEventHandler? DocumentUpdated;
+
         private readonly Category _category;
 
         private ObservableCollection<Item> items;
@@ -28,6 +30,7 @@ namespace MongoDbGuiTask1.ViewModel
             {
                 _category.CategoryName = value;
                 OnPropertyChanged(nameof(CategoryName));
+                DocumentUpdated?.Invoke();
             }
         }
 
@@ -38,6 +41,7 @@ namespace MongoDbGuiTask1.ViewModel
             {
                 items = value;
                 OnPropertyChanged(nameof(Items));
+                DocumentUpdated?.Invoke();
             }
         }
 

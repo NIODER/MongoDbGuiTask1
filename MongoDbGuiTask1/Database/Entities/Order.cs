@@ -34,5 +34,10 @@ namespace Database.Entities
         }
 
         public static Order Default { get => new("unknown", default, default, default, default); }
+
+        public override bool IsDefault()
+        {
+            return this == Default;
+        }
     }
 }

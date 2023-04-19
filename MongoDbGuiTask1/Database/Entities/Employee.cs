@@ -46,5 +46,10 @@ namespace Database.Entities
         }
 
         public static Employee Default { get => new("unknown", "unknown", default, default, "unknown", "unknown", "unknown"); }
+
+        public override bool IsDefault()
+        {
+            return this == Default;
+        }
     }
 }

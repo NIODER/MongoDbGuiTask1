@@ -4,6 +4,8 @@ namespace MongoDbGuiTask1.ViewModel
 {
     internal class ItemViewModel : ViewModelBase, IEntityViewModel
     {
+        public event DocumentUpdatedEventHandler? DocumentUpdated;
+
 		private readonly Item _item;
 
         public ItemViewModel(Item item)
@@ -18,6 +20,7 @@ namespace MongoDbGuiTask1.ViewModel
             {
                 _item.Name = value;
                 OnPropertyChanged(nameof(Name));
+                DocumentUpdated?.Invoke();
             }
         }
 
@@ -28,6 +31,7 @@ namespace MongoDbGuiTask1.ViewModel
             {
                 _item.Price = value;
                 OnPropertyChanged(nameof(Price));
+                DocumentUpdated?.Invoke();
             }
         }
 
@@ -38,6 +42,7 @@ namespace MongoDbGuiTask1.ViewModel
             {
                 _item.Count = value;
                 OnPropertyChanged(nameof(Count));
+                DocumentUpdated?.Invoke();
             }
         }
 
@@ -48,6 +53,7 @@ namespace MongoDbGuiTask1.ViewModel
             {
                 _item.Company = value;
                 OnPropertyChanged(nameof(Company));
+                DocumentUpdated?.Invoke();
             }
         }
 

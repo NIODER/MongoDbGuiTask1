@@ -40,27 +40,38 @@
             </TreeView>
         </DockPanel>
         <StackPanel x:Name="RigthPanel" Grid.Column="2" Margin="4,0,-5,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <TabControl>
+            <TabControl MaxHeight="600" MinHeight="600">
                 <TabItem Header="Все документы" IsSelected="{Binding ListTabSelected}">
-                    <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" ItemsSource="{Binding Entities}" SelectedItem="{Binding SelectedEntity}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseDoubleClick">
-                                <i:InvokeCommandAction Command="{Binding ItemClick}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Path=Shortcut}" />
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </TabItem>
-                <TabItem Header="Выбранный документ" IsSelected="{Binding SingleTabSelected}">
                     <TabItem.Content>
-                        <ContentPresenter Content="{Binding ChosenEntity}" />
+                        <StackPanel>
+                            <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" ItemsSource="{Binding Entities}" SelectedItem="{Binding SelectedEntity}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseDoubleClick">
+                                        <i:InvokeCommandAction Command="{Binding ItemClick}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=Shortcut}" />
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <Button Command="{Binding PrevClick}" IsEnabled="{Binding PrevButtonActive}">Назад</Button>
+                            <Button Command="{Binding NextClick}" IsEnabled="{Binding NextButtonActive}">Далее</Button>
+                        </StackPanel>
+                    </TabItem.Content>
+                </TabItem>
+                <TabItem Header="{Binding SingleHeader}" IsSelected="{Binding SingleTabSelected}">
+                    <TabItem.Content>
+                        <StackPanel>
+                            <ContentPresenter Content="{Binding ChosenEntity}" />
+                            <Button Command="{Binding DeleteClick}">Удалить</Button>
+                            <Button Command="{Binding SaveClick}">Сохранить</Button>
+                        </StackPanel>
                     </TabItem.Content>
                 </TabItem>
             </TabControl>
+            <Button Command="{Binding AddClick}">Создать</Button>
         </StackPanel>
     </Grid>
 </Window>
