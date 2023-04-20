@@ -141,7 +141,7 @@ namespace MongoDbGuiTask1.ViewModel
         private void OnNextClick(object? ignorableParameter)
         {
             _pageNumber++;
-            Entities = new(_database.GetCollectionEntities(_collectionName, _pageNumber));
+            UpdateList();
             if (_pageNumber >= _database.GetCollectionLength(_collectionName) / 10)
                 NextButtonActive = false;
             if (_pageNumber > 0)
@@ -151,7 +151,7 @@ namespace MongoDbGuiTask1.ViewModel
         private void OnPrevClick(object? ignorableParameter)
         {
             _pageNumber--;
-            Entities = new(_database.GetCollectionEntities(_collectionName, _pageNumber));
+            UpdateList();
             if (_pageNumber <= 0)
                 PrevButtonActive = false;
             if (_pageNumber < _database.GetCollectionLength(_collectionName) / 10)
@@ -177,7 +177,7 @@ namespace MongoDbGuiTask1.ViewModel
         private void CollectionExpanded(object sender, RoutedEventArgs e)
         {
             _collectionName = ((Run)((Hyperlink)sender).Inlines.FirstInline).Text;
-            Entities = new(_database.GetCollectionEntities(_collectionName, _pageNumber)); // сделать чтобы номер менялся
+            UpdateList();
             ListTabSelected = true;
         }
 
@@ -203,12 +203,18 @@ namespace MongoDbGuiTask1.ViewModel
             SingleHeader = SINGLE_HEADER_CHANGED;
         }
 
+        private void UpdateList()
+        {
+            Entities = new(_database.GetCollectionEntities(_collectionName, _pageNumber));
+        }
+
         private void OnDeleteClick(object? ignorableParameter)
         {
             if (ChosenEntity == null)
                 return;
             var entity = ChosenEntity.GetEntity();
             _database.DeleteEntity(entity);
+            UpdateList();
         }
 
         public void OnSaveClick(object? ignorableParameter)
@@ -225,6 +231,7 @@ namespace MongoDbGuiTask1.ViewModel
             }
             if (_database.UpdateEntity(entity) > 0)
                 SingleHeader = SINGLE_HEADER;
+            UpdateList();
             ListTabSelected = true;
         }
 
