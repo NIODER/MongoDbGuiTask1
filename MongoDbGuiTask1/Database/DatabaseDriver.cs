@@ -27,6 +27,11 @@ namespace Database
             }
         }
 
+        public string? GetDatabaseName(string connectionString)
+        {
+            return new MongoUrl(connectionString).DatabaseName;
+        }
+
         public List<string> GetDatabaseNames()
         {
             return _client.ListDatabaseNames().ToList();

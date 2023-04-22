@@ -156,7 +156,6 @@ namespace MongoDbGuiTask1.ViewModel
                 PrevButtonActive = false;
             if (_pageNumber < _database.GetCollectionLength(_collectionName) / 10)
                 NextButtonActive = true;
-
         }
 
         public void DatabaseExpanded(object sender, RoutedEventArgs e)
@@ -164,11 +163,11 @@ namespace MongoDbGuiTask1.ViewModel
             var treeViewItem = (TreeViewItem)sender;
             if (treeViewItem.Items.Count > 0)
                 return;
-            var collections = _database.Collections(treeViewItem.Header.ToString() ?? throw new NullReferenceException("database name"));
+            _database.SelectedDatabaseName = treeViewItem.Header.ToString() ?? throw new NullReferenceException("database name");
+            var collections = _database.Collections();
             foreach (var collection in collections)
             {
-                var run1 = new Run(collection);
-                var collectionButton = new Hyperlink(run1);
+                var collectionButton = new Hyperlink(new Run(collection));
                 collectionButton.Click += CollectionExpanded;
                 treeViewItem.Items.Add(collectionButton);
             }
@@ -183,8 +182,17 @@ namespace MongoDbGuiTask1.ViewModel
 
         private void OnItemClick(object? ignorableParameter)
         {
-#warning перехватить тут исключение
-            ChosenEntity = GetEntityViewModel(SelectedEntity);
+            try
+            {
+                ChosenEntity = GetEntityViewModel(SelectedEntity);
+            }
+            catch (InvalidCastException)
+            {
+                MessageBox.Show(SelectedEntity == null 
+                    ? "Не выбран документ." 
+                    : "Неправильный формат документа.", "Ошибка");
+                return;
+            }
             ChosenEntity.DocumentUpdated += OnDocumentUpdated;
             SingleTabSelected = true;
         }
@@ -245,8 +253,15 @@ namespace MongoDbGuiTask1.ViewModel
                 DatabaseInteractor.EMPLOYEE_COLLECTION_NAME => Employee.Default,
                 _ => null
             };
-#warning тут перехватить исключение
-            ChosenEntity = GetEntityViewModel(SelectedEntity);
+            try
+            {
+                ChosenEntity = GetEntityViewModel(SelectedEntity);
+            }
+            catch (InvalidCastException)
+            {
+                MessageBox.Show("Произошла непредвиденная ошибка.", "Ошибка");
+                return;
+            }
             SingleTabSelected = true;
         }
     }

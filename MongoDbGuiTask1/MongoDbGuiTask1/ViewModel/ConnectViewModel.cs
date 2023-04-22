@@ -29,10 +29,14 @@ namespace MongoDbGuiTask1.ViewModel
                 MessageBox.Show("Ошибка подключения:\n" + _connectionString, "Ошибка");
                 return;
             }
-            catch (MongoAuthenticationException ex)
+            catch (MongoAuthenticationException e)
             {
-                MessageBox.Show("Ошибка аутентификации.\n" + ex.Message, "Ошибка");
+                MessageBox.Show("Ошибка аутентификации.\n" + e.Message, "Ошибка");
                 return;
+            }
+            catch (ArgumentException e)
+            {
+                MessageBox.Show($"База данных {e.ParamName} не найдена");
             }
             WindowPresenter.ShowWindow(WindowPresenter.WindowType.MainWindow);
             WindowPresenter.CloseWindow(window.GetType());

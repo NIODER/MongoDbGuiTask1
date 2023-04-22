@@ -3,6 +3,7 @@ using Database;
 using Database.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MongoDbGuiTask1.Model
 {
@@ -12,7 +13,19 @@ namespace MongoDbGuiTask1.Model
 		private static DatabaseInteractor? _instance;
 
 		private readonly DatabaseDriver _databaseDriver;
-		private readonly string dbName = "shop";
+		private string dbName;
+        public string SelectedDatabaseName
+		{
+			get => dbName;
+			set
+			{
+				if (Databases.Contains(value))
+                    dbName = value;
+				else
+					throw new ArgumentException(dbName, nameof(value));
+			}
+		}
+
 		public const string ITEMS_COLLECTION_NAME = "items";
 		public const string CATEGORIES_COLLECTION_NAME = "categories";
 		public const string EMPLOYEE_COLLECTION_NAME = "employee";
@@ -21,6 +34,7 @@ namespace MongoDbGuiTask1.Model
         private DatabaseInteractor(string connectionString)
         {
 			_databaseDriver = new DatabaseDriver(connectionString);
+            dbName = Databases.FirstOrDefault() ?? "shop";
         }
 
 		public static DatabaseInteractor Instance()
@@ -40,9 +54,9 @@ namespace MongoDbGuiTask1.Model
 			}
 		}
 
-		public List<string> Collections(string databaseName)
+		public List<string> Collections()
 		{
-			return _databaseDriver.GetCollectionNames(databaseName);
+			return _databaseDriver.GetCollectionNames(SelectedDatabaseName);
 		}
 
 		public List<string> Databases
@@ -52,15 +66,15 @@ namespace MongoDbGuiTask1.Model
 
 		public long GetCollectionLength(string collectionName)
 		{
-			return _databaseDriver.GetCollectionEntitiesCount(dbName, collectionName);
+			return _databaseDriver.GetCollectionEntitiesCount(SelectedDatabaseName, collectionName);
 		}
 
 		public IEnumerable<DbEntity> GetCollectionEntities(string collectionName, int page) => collectionName switch
 		{
-			ITEMS_COLLECTION_NAME => _databaseDriver.GetEntitiesPage<Item>(dbName, collectionName, e => true, page),
-			CATEGORIES_COLLECTION_NAME => _databaseDriver.GetEntitiesPage<Category>(dbName, collectionName, e => true, page),
-			EMPLOYEE_COLLECTION_NAME => _databaseDriver.GetEntitiesPage<Employee>(dbName, collectionName, e => true, page),
-			ORDER_COLLECTION_NAME => _databaseDriver.GetEntitiesPage<Order>(dbName, collectionName, e => true, page),
+			ITEMS_COLLECTION_NAME => _databaseDriver.GetEntitiesPage<Item>(SelectedDatabaseName, collectionName, e => true, page),
+			CATEGORIES_COLLECTION_NAME => _databaseDriver.GetEntitiesPage<Category>(SelectedDatabaseName, collectionName, e => true, page),
+			EMPLOYEE_COLLECTION_NAME => _databaseDriver.GetEntitiesPage<Employee>(SelectedDatabaseName, collectionName, e => true, page),
+			ORDER_COLLECTION_NAME => _databaseDriver.GetEntitiesPage<Order>(SelectedDatabaseName, collectionName, e => true, page),
 			_ => throw new InvalidCastException()
 		};
 
@@ -75,17 +89,17 @@ namespace MongoDbGuiTask1.Model
 
 		public void DeleteEntity(DbEntity entity)
 		{
-			_databaseDriver.DeleteOneEntity(dbName, GetCollectionName(entity), entity);
+			_databaseDriver.DeleteOneEntity(SelectedDatabaseName, GetCollectionName(entity), entity);
 		}
 
 		public long UpdateEntity(DbEntity entity)
 		{
-			return _databaseDriver.UpdateOneEntity(dbName, GetCollectionName(entity), entity)?.ModifiedCount ?? 0;
+			return _databaseDriver.UpdateOneEntity(SelectedDatabaseName, GetCollectionName(entity), entity)?.ModifiedCount ?? 0;
 		}
 
 		public void InsertEntity(DbEntity entity)
 		{
-			_databaseDriver.InsertOneEntity(dbName, GetCollectionName(entity), entity);
+			_databaseDriver.InsertOneEntity(SelectedDatabaseName, GetCollectionName(entity), entity);
 		}
 	}
 }
