@@ -28,6 +28,7 @@ namespace MongoDbGuiTask1.ViewModel
         private string singleHeader = SINGLE_HEADER;
         private bool nextButtonActive = true;
         private bool prevButtonActive = false;
+        private bool addCategoryButtonEnabled = false;
 
         public RelayCommand ItemClick { get; private set; }
         public RelayCommand DeleteClick { get; private set; }
@@ -35,6 +36,7 @@ namespace MongoDbGuiTask1.ViewModel
         public RelayCommand AddClick { get; private set; }
         public RelayCommand NextClick { get; set; }
         public RelayCommand PrevClick { get; set; }
+        public RelayCommand AddCollectionClick { get; set; }
 
         public string SingleHeader
         {
@@ -58,6 +60,17 @@ namespace MongoDbGuiTask1.ViewModel
             AddClick = new(OnAddClick);
             NextClick = new(OnNextClick);
             PrevClick = new(OnPrevClick);
+            AddCollectionClick = new(OnAddCollectionClick);
+        }
+
+        public bool AddCategoryButtonEnabled
+        {
+            get => addCategoryButtonEnabled;
+            set
+            {
+                addCategoryButtonEnabled = value;
+                OnPropertyChanged(nameof(AddCategoryButtonEnabled));
+            }
         }
 
         public IEntityViewModel? ChosenEntity
@@ -163,7 +176,18 @@ namespace MongoDbGuiTask1.ViewModel
             var treeViewItem = (TreeViewItem)sender;
             if (treeViewItem.Items.Count > 0)
                 return;
-            _database.SelectedDatabaseName = treeViewItem.Header.ToString() ?? throw new NullReferenceException("database name");
+            try
+            {
+                _database.SelectedDatabaseName = treeViewItem.Header.ToString() ?? throw new NullReferenceException("database name");
+            }
+            catch (ArgumentException)
+            {
+                MessageBox.Show("Выбранная база данных не найдена.", "Ошибка");
+            }
+            catch(NullReferenceException)
+            {
+                MessageBox.Show("База данных не выбрана (внутренняя ошибка).", "Ошибка");
+            }
             var collections = _database.Collections();
             foreach (var collection in collections)
             {
@@ -178,6 +202,7 @@ namespace MongoDbGuiTask1.ViewModel
             _collectionName = ((Run)((Hyperlink)sender).Inlines.FirstInline).Text;
             UpdateList();
             ListTabSelected = true;
+            AddCategoryButtonEnabled = true;
         }
 
         private void OnItemClick(object? ignorableParameter)
@@ -263,6 +288,13 @@ namespace MongoDbGuiTask1.ViewModel
                 return;
             }
             SingleTabSelected = true;
+        }
+
+        private void OnAddCollectionClick(object? collectionName)
+        {
+            if (collectionName is not string || collectionName == null)
+                return;
+            _database.AddCollection((string)collectionName);
         }
     }
 }

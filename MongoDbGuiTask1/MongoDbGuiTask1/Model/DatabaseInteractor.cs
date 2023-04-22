@@ -14,6 +14,7 @@ namespace MongoDbGuiTask1.Model
 
 		private readonly DatabaseDriver _databaseDriver;
 		private string dbName;
+
         public string SelectedDatabaseName
 		{
 			get => dbName;
@@ -100,6 +101,11 @@ namespace MongoDbGuiTask1.Model
 		public void InsertEntity(DbEntity entity)
 		{
 			_databaseDriver.InsertOneEntity(SelectedDatabaseName, GetCollectionName(entity), entity);
+		}
+
+		public void AddCollection(string collectionName)
+		{
+			_databaseDriver.AddCollection(dbName, collectionName);
 		}
 	}
 }

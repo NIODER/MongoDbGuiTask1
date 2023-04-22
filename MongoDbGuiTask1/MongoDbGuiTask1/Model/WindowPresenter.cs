@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using MongoDbGuiTask1.View;
 
 namespace MongoDbGuiTask1.Model
 {
@@ -8,7 +9,8 @@ namespace MongoDbGuiTask1.Model
         public enum WindowType
         {
             ConnectWindow,
-            MainWindow
+            MainWindow,
+            DialogWindowSelectCollectionType
         }
 
         public static void ShowWindow(WindowType windowType)

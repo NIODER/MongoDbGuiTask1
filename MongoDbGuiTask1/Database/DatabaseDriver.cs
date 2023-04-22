@@ -2,6 +2,7 @@
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Linq.Expressions;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Database
 {
@@ -80,6 +81,12 @@ namespace Database
             _client.GetDatabase(databaseName)
                 .GetCollection<DbEntity>(collectionName)
                 .FindOneAndDelete(dbEntity.ToBsonDocument());
+        }
+
+        public void AddCollection(string databaseName, string collectionName)
+        {
+            _client.GetDatabase(databaseName)
+                .CreateCollection(collectionName);
         }
     }
 }
