@@ -4,7 +4,7 @@ namespace MongoDbGuiTask1
 {
     internal class Locator
     {
-        public MainViewModel MainViewModel { get; set; }
+        public MainViewModel MainViewModel { get; private set; }
 
         public Locator()
         {

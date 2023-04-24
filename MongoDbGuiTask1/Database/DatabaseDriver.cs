@@ -88,5 +88,11 @@ namespace Database
             _client.GetDatabase(databaseName)
                 .CreateCollection(collectionName);
         }
+
+        public void CreateDatabase(string databaseName, List<string> collections)
+        {
+            var db = _client.GetDatabase(databaseName);
+            Task.WaitAll(collections.Select(col => db.CreateCollectionAsync(col)).ToArray());
+        }
     }
 }

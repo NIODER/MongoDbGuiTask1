@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using ZstdSharp.Unsafe;
 
 namespace MongoDbGuiTask1.ViewModel
 {
@@ -29,6 +30,7 @@ namespace MongoDbGuiTask1.ViewModel
         private bool nextButtonActive = true;
         private bool prevButtonActive = false;
         private bool addCategoryButtonEnabled = false;
+        private string _newDatabaseName = string.Empty;
 
         public RelayCommand ItemClick { get; private set; }
         public RelayCommand DeleteClick { get; private set; }
@@ -61,6 +63,16 @@ namespace MongoDbGuiTask1.ViewModel
             NextClick = new(OnNextClick);
             PrevClick = new(OnPrevClick);
             AddCollectionClick = new(OnAddCollectionClick);
+        }
+
+        public string NewDatabaseName
+        {
+            get => _newDatabaseName;
+            set
+            {
+                _newDatabaseName = value;
+                OnPropertyChanged(nameof(NewDatabaseName));
+            }
         }
 
         public bool AddCategoryButtonEnabled
@@ -295,6 +307,16 @@ namespace MongoDbGuiTask1.ViewModel
             if (collectionName is not string || collectionName == null)
                 return;
             _database.AddCollection((string)collectionName);
+        }
+
+        private void OnCreateDatabaseClick(object? ignorableParameter)
+        {
+            if (string.IsNullOrEmpty(NewDatabaseName))
+            {
+                MessageBox.Show("Введите название базы данныхю.", "Ошибка");
+                return;
+            }
+
         }
     }
 }

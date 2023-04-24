@@ -10,7 +10,7 @@ namespace MongoDbGuiTask1.Model
         {
             ConnectWindow,
             MainWindow,
-            DialogWindowSelectCollectionType
+            DbNameDialog
         }
 
         public static void ShowWindow(WindowType windowType)
@@ -19,6 +19,7 @@ namespace MongoDbGuiTask1.Model
             {
                 WindowType.ConnectWindow => new ConnectWindow(),
                 WindowType.MainWindow => new MainWindow(),
+                WindowType.DbNameDialog => new DbNameDialogWindow(),
                 _ => throw new ArgumentOutOfRangeException(nameof(windowType))
             };
             window.Show();
