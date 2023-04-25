@@ -1,4 +1,5 @@
 ﻿using Database.Entities;
+using Microsoft.VisualBasic;
 using MongoDbGuiTask1.Model;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,8 @@ namespace MongoDbGuiTask1.ViewModel
         private bool prevButtonActive = false;
         private bool addCategoryButtonEnabled = false;
         private string _newDatabaseName = string.Empty;
+
+        private TreeViewItem TreeViewItem { get; set; }
 
         public RelayCommand ItemClick { get; private set; }
         public RelayCommand DeleteClick { get; private set; }
@@ -189,12 +192,12 @@ namespace MongoDbGuiTask1.ViewModel
 
         public void DatabaseExpanded(object sender, RoutedEventArgs e)
         {
-            var treeViewItem = (TreeViewItem)sender;
-            if (treeViewItem.Items.Count > 0)
+            TreeViewItem = (TreeViewItem)sender;
+            if (TreeViewItem.Items.Count > 0)
                 return;
             try
             {
-                _database.SelectedDatabaseName = treeViewItem.Header.ToString() ?? throw new NullReferenceException("database name");
+                _database.SelectedDatabaseName = TreeViewItem.Header.ToString() ?? throw new NullReferenceException("database name");
             }
             catch (ArgumentException)
             {
@@ -209,7 +212,7 @@ namespace MongoDbGuiTask1.ViewModel
             {
                 var collectionButton = new Hyperlink(new Run(collection));
                 collectionButton.Click += CollectionExpanded;
-                treeViewItem.Items.Add(collectionButton);
+                TreeViewItem.Items.Add(collectionButton);
             }
         }
 
@@ -311,6 +314,9 @@ namespace MongoDbGuiTask1.ViewModel
             if (collectionName is not string || collectionName == null)
                 return;
             _database.AddCollection((string)collectionName);
+            var collectionButton = new Hyperlink(new Run((string)collectionName));
+            collectionButton.Click += CollectionExpanded;
+            TreeViewItem.Items.Add(collectionButton);
         }
 
         private void OnCreateDatabaseClick(object? ignorableParameter)
