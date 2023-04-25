@@ -1,13 +1,11 @@
-﻿using Amazon.Runtime.Internal.Util;
-using Database;
+﻿using Database;
 using Database.Entities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace MongoDbGuiTask1.Model
 {
-    internal class DatabaseInteractor
+	internal class DatabaseInteractor
     {
 		private static string? _connectionString;
 		private static DatabaseInteractor? _instance;
@@ -35,7 +33,7 @@ namespace MongoDbGuiTask1.Model
         private DatabaseInteractor(string connectionString)
         {
 			_databaseDriver = new DatabaseDriver(connectionString);
-            dbName = Databases.FirstOrDefault() ?? "shop";
+            dbName = _databaseDriver.GetDatabaseName(connectionString) ?? "shop";
         }
 
 		public static DatabaseInteractor Instance()
