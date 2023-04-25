@@ -110,7 +110,13 @@ namespace MongoDbGuiTask1.Model
 
 		public void CreateDatabase(string databaseName)
 		{
-
+			_databaseDriver.CreateDatabase(databaseName, new List<string>()
+            {
+                ITEMS_COLLECTION_NAME,
+                CATEGORIES_COLLECTION_NAME,
+                EMPLOYEE_COLLECTION_NAME,
+                ORDER_COLLECTION_NAME
+            });
 		}
 	}
 }

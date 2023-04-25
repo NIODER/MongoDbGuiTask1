@@ -1,15 +1,12 @@
 ﻿using Database.Entities;
-using Microsoft.VisualBasic;
-using MongoDB.Driver;
 using MongoDbGuiTask1.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Reflection;
+using System.Net.Sockets;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
-using ZstdSharp.Unsafe;
 
 namespace MongoDbGuiTask1.ViewModel
 {
@@ -19,6 +16,9 @@ namespace MongoDbGuiTask1.ViewModel
 
         private const string SINGLE_HEADER = "Выбранный документ";
         private const string SINGLE_HEADER_CHANGED = "Выбранный документ (не сохранено)";
+
+        public delegate void UpdateDatabasesEventHandler(List<string> databases);
+        public event UpdateDatabasesEventHandler? UpdateDatabases;
 
         private DbEntity? _selectedEntity;
         private IEntityViewModel? _chosenEntity;
@@ -39,6 +39,8 @@ namespace MongoDbGuiTask1.ViewModel
         public RelayCommand NextClick { get; set; }
         public RelayCommand PrevClick { get; set; }
         public RelayCommand AddCollectionClick { get; set; }
+        public RelayCommand CreateDatabaseClick { get; set; }
+        public RelayCommand CommitNewDatabaseNameClick { get; set; }
 
         public string SingleHeader
         {
@@ -63,6 +65,8 @@ namespace MongoDbGuiTask1.ViewModel
             NextClick = new(OnNextClick);
             PrevClick = new(OnPrevClick);
             AddCollectionClick = new(OnAddCollectionClick);
+            CreateDatabaseClick = new(OnCreateDatabaseClick);
+            CommitNewDatabaseNameClick = new(OnCommitNewDatabaseNameClick);
         }
 
         public string NewDatabaseName
@@ -181,7 +185,7 @@ namespace MongoDbGuiTask1.ViewModel
                 PrevButtonActive = false;
             if (_pageNumber < _database.GetCollectionLength(_collectionName) / 10)
                 NextButtonActive = true;
-        }
+        } 
 
         public void DatabaseExpanded(object sender, RoutedEventArgs e)
         {
@@ -311,12 +315,25 @@ namespace MongoDbGuiTask1.ViewModel
 
         private void OnCreateDatabaseClick(object? ignorableParameter)
         {
+            WindowPresenter.ShowWindow(WindowPresenter.WindowType.DbNameDialog);
+        }
+
+        private void OnCommitNewDatabaseNameClick(object? ignorableParameter)
+        {
             if (string.IsNullOrEmpty(NewDatabaseName))
             {
-                MessageBox.Show("Введите название базы данныхю.", "Ошибка");
+                MessageBox.Show("Введите название базы данных.", "Ошибка");
                 return;
             }
-
+            if (_database.Databases.Contains(NewDatabaseName))
+            {
+                MessageBox.Show("База данных с таким названием уже существует.", "Ошибка");
+                return;
+            }
+            _database.CreateDatabase(NewDatabaseName);
+            WindowPresenter.CloseWindow(WindowPresenter.WindowType.DbNameDialog);
+            MessageBox.Show($"Создана база данных {NewDatabaseName}", "Внимание");
+            UpdateDatabases?.Invoke(_database.Databases);
         }
     }
 }

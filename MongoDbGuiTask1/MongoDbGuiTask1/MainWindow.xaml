@@ -45,6 +45,7 @@
                     <MenuItem Header="categories" Command="{Binding AddCollectionClick}" CommandParameter="categories" />
                     <MenuItem Header="items" Command="{Binding AddCollectionClick}" CommandParameter="items" />
                 </MenuItem>
+                <MenuItem Header="Создать дазу данных" Command="{Binding CreateDatabaseClick}" />
             </MenuItem>
             <MenuItem Header="Справка">
             </MenuItem>

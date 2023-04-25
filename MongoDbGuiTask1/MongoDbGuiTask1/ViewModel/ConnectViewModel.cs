@@ -39,7 +39,7 @@ namespace MongoDbGuiTask1.ViewModel
                 MessageBox.Show($"База данных {e.ParamName} не найдена");
             }
             WindowPresenter.ShowWindow(WindowPresenter.WindowType.MainWindow);
-            WindowPresenter.CloseWindow(window.GetType());
+            WindowPresenter.CloseWindow(WindowPresenter.WindowType.ConnectWindow);
         }
 
         public string ConnectionString

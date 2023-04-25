@@ -25,11 +25,18 @@ namespace MongoDbGuiTask1.Model
             window.Show();
         }
 
-        public static void CloseWindow(Type windowType)
+        public static void CloseWindow(WindowType windowType)
         {
+            Type w = windowType switch
+            {
+                WindowType.ConnectWindow => typeof(ConnectWindow),
+                WindowType.MainWindow => typeof(MainWindow),
+                WindowType.DbNameDialog => typeof(DbNameDialogWindow),
+                _ => throw new ArgumentOutOfRangeException(nameof(windowType))
+            };
             foreach (var window in Application.Current.Windows)
             {
-                if (window.GetType() == windowType)
+                if (window.GetType() == w)
                 {
                     ((Window)window).Close();
                     break;

@@ -15,6 +15,6 @@
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" VerticalAlignment="Bottom">Название базы данных</TextBlock>
         <TextBox Grid.Row="1" Text="{Binding NewDatabaseName}" />
-        <Button Grid.Row="2" Height="25" Width="150" Command="{Binding }" Content="Создать" />
+        <Button Grid.Row="2" Height="25" Width="150" Command="{Binding CommitNewDatabaseNameClick}" Content="Создать" />
     </Grid>
 </Window>

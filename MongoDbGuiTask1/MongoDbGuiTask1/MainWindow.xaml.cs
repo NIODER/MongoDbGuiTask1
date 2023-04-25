@@ -12,6 +12,11 @@ namespace MongoDbGuiTask1
     /// </summary>
     public partial class MainWindow : Window
     {
+        private MainViewModel MainContext
+        {
+            get => (MainViewModel)DataContext;
+        }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -19,13 +24,20 @@ namespace MongoDbGuiTask1
 
         protected override void OnInitialized(EventArgs e)
         {
-            foreach (var db in DatabaseInteractor.Instance().Databases)
+            MainContext.UpdateDatabases += UpdateDatabases;
+            UpdateDatabases(DatabaseInteractor.Instance().Databases);
+            base.OnInitialized(e);
+        }
+
+        private void UpdateDatabases(List<string> databases)
+        {
+            DatabasesTree.Items.Clear();
+            foreach (var database in databases)
             {
-                var item = new TreeViewItem() { Header = db };
-                item.Expanded += ((MainViewModel)DataContext).DatabaseExpanded;
+                var item = new TreeViewItem() { Header = database };
+                item.Expanded += MainContext.DatabaseExpanded;
                 DatabasesTree.Items.Add(item);
             }
-            base.OnInitialized(e);
         }
     }
 }
