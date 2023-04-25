@@ -107,5 +107,10 @@ namespace MongoDbGuiTask1.Model
 		{
 			_databaseDriver.AddCollection(dbName, collectionName);
 		}
+
+		public void CreateDatabase(string databaseName)
+		{
+
+		}
 	}
 }
