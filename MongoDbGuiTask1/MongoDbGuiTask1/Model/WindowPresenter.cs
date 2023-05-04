@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using MongoDbGuiTask1.View;
+using MongoDbGuiTask1.ViewModel;
 
 namespace MongoDbGuiTask1.Model
 {
@@ -10,7 +11,8 @@ namespace MongoDbGuiTask1.Model
         {
             ConnectWindow,
             MainWindow,
-            DbNameDialog
+            DbNameDialog,
+            AddItemCategoryWindow
         }
 
         public static void ShowWindow(WindowType windowType)
