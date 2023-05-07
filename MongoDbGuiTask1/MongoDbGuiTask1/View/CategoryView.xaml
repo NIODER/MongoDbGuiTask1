@@ -18,7 +18,7 @@
                 <ContextMenu>
                     <MenuItem Header="Удалить" 
                               Command="{Binding DeleteItemCommand}" 
-                              CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent.PlacementTarget}" />
+                              CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent.PlacementTarget.SelectedItem}" />
                     <MenuItem Header="Добавить"
                               Command="{Binding AddItemCommand}" />
                 </ContextMenu>

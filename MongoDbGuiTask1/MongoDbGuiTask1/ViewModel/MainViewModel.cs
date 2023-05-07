@@ -198,7 +198,7 @@ namespace MongoDbGuiTask1.ViewModel
             Employee => new EmployeeViewModel((Employee)dbEntity),
             Item => new ItemViewModel((Item)dbEntity),
             Order => new OrderViewModel((Order)dbEntity),
-            _ => throw new InvalidCastException(),
+            _ => throw new InvalidCastException()
         };
 
         private void OnDocumentUpdated()

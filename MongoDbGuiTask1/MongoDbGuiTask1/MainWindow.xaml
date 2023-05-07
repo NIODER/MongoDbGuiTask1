@@ -23,6 +23,9 @@
         <DataTemplate DataType="{x:Type vm:OrderViewModel}">
             <views:OrderView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ItemViewModel}">
+            <views:ItemView />
+        </DataTemplate>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -57,27 +60,11 @@
             <TabControl MaxHeight="600" MinHeight="600">
                 <TabItem Header="Все документы" IsSelected="{Binding ListTabSelected}">
                     <ContentPresenter Content="{Binding ItemsListViewModel}" />
-                    <!--<StackPanel>
-                        <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" ItemsSource="{Binding Entities}" SelectedItem="{Binding SelectedEntity}">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="MouseDoubleClick">
-                                    <i:InvokeCommandAction Command="{Binding ItemClick}" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Shortcut}" />
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                        <Button Command="{Binding PrevClick}" IsEnabled="{Binding PrevButtonActive}" Content="Назад"/>
-                        <Button Command="{Binding NextClick}" IsEnabled="{Binding NextButtonActive}" Content="Далее"/>
-                    </StackPanel>-->
                 </TabItem>
                 <TabItem Header="{Binding SingleHeader}" IsSelected="{Binding SingleTabSelected}">
                     <StackPanel>
                         <ContentPresenter Content="{Binding ChosenEntity}" />
-                        <Button Command="{Binding DeleteClick}" Content="Удалить"/>
+                        <Button Command="{Binding DeleteClick}" Content="Удалить документ"/>
                         <Button Command="{Binding SaveClick}" Content="Сохранить"/>
                     </StackPanel>
                 </TabItem>

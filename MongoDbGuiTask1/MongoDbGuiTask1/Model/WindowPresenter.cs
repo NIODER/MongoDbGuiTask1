@@ -15,16 +15,18 @@ namespace MongoDbGuiTask1.Model
             AddItemCategoryWindow
         }
 
-        public static void ShowWindow(WindowType windowType)
+        public static void ShowWindow(WindowType windowType, ViewModelBase? dataContext = null)
         {
             Window window = windowType switch
             {
                 WindowType.ConnectWindow => new ConnectWindow(),
                 WindowType.MainWindow => new MainWindow(),
                 WindowType.DbNameDialog => new DbNameDialogWindow(),
-                WindowType.AddItemCategoryWindow => throw new NotImplementedException(),
+                WindowType.AddItemCategoryWindow => new AddItemCategoryWindow(),
                 _ => throw new ArgumentOutOfRangeException(nameof(windowType))
             };
+            if (dataContext != null)
+                window.DataContext = dataContext;
             window.Show();
         }
 
@@ -35,6 +37,7 @@ namespace MongoDbGuiTask1.Model
                 WindowType.ConnectWindow => typeof(ConnectWindow),
                 WindowType.MainWindow => typeof(MainWindow),
                 WindowType.DbNameDialog => typeof(DbNameDialogWindow),
+                WindowType.AddItemCategoryWindow => typeof(AddItemCategoryWindow),
                 _ => throw new ArgumentOutOfRangeException(nameof(windowType))
             };
             foreach (var window in Application.Current.Windows)
