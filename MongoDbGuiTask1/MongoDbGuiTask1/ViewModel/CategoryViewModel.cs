@@ -14,12 +14,14 @@ namespace MongoDbGuiTask1.ViewModel
         private ObservableCollection<Item> items;
 
         public RelayCommand DeleteItemCommand { get; private set; }
+        public RelayCommand AddItemCommand { get; private set; }
 
         public CategoryViewModel([NotNull] Category category)
         {
             _category = category;
             items = _category.Items == null ? (new()) : (new(_category.Items));
             DeleteItemCommand = new(OnDeleteItemClick);
+            AddItemCommand = new(OnAddItemClick);
         }
 
         public string Id
@@ -55,6 +57,11 @@ namespace MongoDbGuiTask1.ViewModel
         {
             if (item is Item item1)
                 _category.Items?.Remove(item1);
+        }
+
+        private void OnAddItemClick(object? ignorable)
+        {
+
         }
     }
 }

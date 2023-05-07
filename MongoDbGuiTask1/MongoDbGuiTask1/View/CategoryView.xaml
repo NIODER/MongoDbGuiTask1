@@ -16,7 +16,11 @@
         <ListBox ItemsSource="{Binding Items}" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" Height="335">
             <ListBox.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Удалить" Command="{Binding DeleteItemCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent.PlacementTarget}" />
+                    <MenuItem Header="Удалить" 
+                              Command="{Binding DeleteItemCommand}" 
+                              CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent.PlacementTarget}" />
+                    <MenuItem Header="Добавить"
+                              Command="{Binding AddItemCommand}" />
                 </ContextMenu>
             </ListBox.ContextMenu>
             <ListBox.ItemTemplate>

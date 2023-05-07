@@ -22,6 +22,7 @@ namespace MongoDbGuiTask1.Model
                 WindowType.ConnectWindow => new ConnectWindow(),
                 WindowType.MainWindow => new MainWindow(),
                 WindowType.DbNameDialog => new DbNameDialogWindow(),
+                WindowType.AddItemCategoryWindow => throw new NotImplementedException(),
                 _ => throw new ArgumentOutOfRangeException(nameof(windowType))
             };
             window.Show();

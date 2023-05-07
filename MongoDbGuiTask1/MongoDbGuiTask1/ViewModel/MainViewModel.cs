@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net.Sockets;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Documents;
 
@@ -21,29 +22,33 @@ namespace MongoDbGuiTask1.ViewModel
         public delegate void UpdateDatabasesEventHandler(List<string> databases);
         public event UpdateDatabasesEventHandler? UpdateDatabases;
 
-        private DbEntity? _selectedEntity;
         private IEntityViewModel? _chosenEntity;
         private ObservableCollection<DbEntity> _entities;
-        private int _pageNumber;
-        private string _collectionName;
         private bool listTabSelected;
         private string singleHeader = SINGLE_HEADER;
-        private bool nextButtonActive = true;
-        private bool prevButtonActive = false;
         private bool addCategoryButtonEnabled = false;
         private string _newDatabaseName = string.Empty;
 
-        private TreeViewItem TreeViewItem { get; set; }
+        private TreeViewItem? TreeViewItem { get; set; }
 
         public RelayCommand ItemClick { get; private set; }
         public RelayCommand DeleteClick { get; private set; }
         public RelayCommand SaveClick { get; private set; }
         public RelayCommand AddClick { get; private set; }
-        public RelayCommand NextClick { get; set; }
-        public RelayCommand PrevClick { get; set; }
         public RelayCommand AddCollectionClick { get; set; }
         public RelayCommand CreateDatabaseClick { get; set; }
         public RelayCommand CommitNewDatabaseNameClick { get; set; }
+
+        private ItemsListViewModel? _itemsListViewModel;
+        public ItemsListViewModel? ItemsListViewModel
+        {
+            get => _itemsListViewModel;
+            set
+            {
+                _itemsListViewModel = value;
+                OnPropertyChanged(nameof(ItemsListViewModel));
+            }
+        }
 
         public string SingleHeader
         {
@@ -59,14 +64,10 @@ namespace MongoDbGuiTask1.ViewModel
         {
             _database = DatabaseInteractor.Instance();
             _entities = new();
-            _pageNumber = 0;
-            _collectionName = string.Empty;
             ItemClick = new(OnItemClick);
             DeleteClick = new(OnDeleteClick);
             SaveClick = new(OnSaveClick);
             AddClick = new(OnAddClick);
-            NextClick = new(OnNextClick);
-            PrevClick = new(OnPrevClick);
             AddCollectionClick = new(OnAddCollectionClick);
             CreateDatabaseClick = new(OnCreateDatabaseClick);
             CommitNewDatabaseNameClick = new(OnCommitNewDatabaseNameClick);
@@ -99,16 +100,6 @@ namespace MongoDbGuiTask1.ViewModel
             {
                 _chosenEntity = value;
                 OnPropertyChanged(nameof(ChosenEntity));
-            }
-        }
-
-        public DbEntity? SelectedEntity
-        {
-            get { return _selectedEntity; }
-            set
-            {
-                _selectedEntity = value;
-                OnPropertyChanged(nameof(SelectedEntity));
             }
         }
 
@@ -150,46 +141,6 @@ namespace MongoDbGuiTask1.ViewModel
             }
         }
 
-        public bool NextButtonActive
-        {
-            get => nextButtonActive;
-            set
-            {
-                nextButtonActive = value;
-                OnPropertyChanged(nameof(NextButtonActive));
-            }
-        }
-
-        public bool PrevButtonActive
-        {
-            get => prevButtonActive;
-            set
-            {
-                prevButtonActive = value;
-                OnPropertyChanged(nameof(PrevButtonActive));
-            }
-        }
-
-        private void OnNextClick(object? ignorableParameter)
-        {
-            _pageNumber++;
-            UpdateList();
-            if (_pageNumber >= _database.GetCollectionLength(_collectionName) / 10)
-                NextButtonActive = false;
-            if (_pageNumber > 0)
-                PrevButtonActive = true;
-        }
-
-        private void OnPrevClick(object? ignorableParameter)
-        {
-            _pageNumber--;
-            UpdateList();
-            if (_pageNumber <= 0)
-                PrevButtonActive = false;
-            if (_pageNumber < _database.GetCollectionLength(_collectionName) / 10)
-                NextButtonActive = true;
-        } 
-
         public void DatabaseExpanded(object sender, RoutedEventArgs e)
         {
             TreeViewItem = (TreeViewItem)sender;
@@ -218,8 +169,8 @@ namespace MongoDbGuiTask1.ViewModel
 
         private void CollectionExpanded(object sender, RoutedEventArgs e)
         {
-            _collectionName = ((Run)((Hyperlink)sender).Inlines.FirstInline).Text;
-            UpdateList();
+            string collectionName = ((Run)((Hyperlink)sender).Inlines.FirstInline).Text;
+            ItemsListViewModel = new(collectionName, OnItemClick);
             ListTabSelected = true;
             AddCategoryButtonEnabled = true;
         }
@@ -228,11 +179,11 @@ namespace MongoDbGuiTask1.ViewModel
         {
             try
             {
-                ChosenEntity = GetEntityViewModel(SelectedEntity);
+                ChosenEntity = GetEntityViewModel(ItemsListViewModel?.SelectedEntity);
             }
             catch (InvalidCastException)
             {
-                MessageBox.Show(SelectedEntity == null 
+                MessageBox.Show(ItemsListViewModel?.SelectedEntity == null 
                     ? "Не выбран документ." 
                     : "Неправильный формат документа.", "Ошибка");
                 return;
@@ -241,7 +192,7 @@ namespace MongoDbGuiTask1.ViewModel
             SingleTabSelected = true;
         }
 
-        private IEntityViewModel GetEntityViewModel(DbEntity? dbEntity) => dbEntity switch
+        private static IEntityViewModel GetEntityViewModel(DbEntity? dbEntity) => dbEntity switch
         {
             Category => new CategoryViewModel((Category)dbEntity),
             Employee => new EmployeeViewModel((Employee)dbEntity),
@@ -255,18 +206,13 @@ namespace MongoDbGuiTask1.ViewModel
             SingleHeader = SINGLE_HEADER_CHANGED;
         }
 
-        private void UpdateList()
-        {
-            Entities = new(_database.GetCollectionEntities(_collectionName, _pageNumber));
-        }
-
         private void OnDeleteClick(object? ignorableParameter)
         {
             if (ChosenEntity == null)
                 return;
             var entity = ChosenEntity.GetEntity();
             _database.DeleteEntity(entity);
-            UpdateList();
+            ItemsListViewModel?.UpdateList();
         }
 
         public void OnSaveClick(object? ignorableParameter)
@@ -283,13 +229,18 @@ namespace MongoDbGuiTask1.ViewModel
             }
             if (_database.UpdateEntity(entity) > 0)
                 SingleHeader = SINGLE_HEADER;
-            UpdateList();
+            ItemsListViewModel?.UpdateList();
             ListTabSelected = true;
         }
 
         private void OnAddClick(object? ignorableParameter)
         {
-            SelectedEntity = _collectionName switch
+            if (ItemsListViewModel == null)
+            {
+                MessageBox.Show("Выберите коллекцию перед добавлением.", "Ошибка");
+                return;
+            }
+            ItemsListViewModel.SelectedEntity = ItemsListViewModel.CollectionName switch
             {
                 DatabaseInteractor.ORDER_COLLECTION_NAME => Order.Default,
                 DatabaseInteractor.ITEMS_COLLECTION_NAME => Item.Default,
@@ -299,7 +250,7 @@ namespace MongoDbGuiTask1.ViewModel
             };
             try
             {
-                ChosenEntity = GetEntityViewModel(SelectedEntity);
+                ChosenEntity = GetEntityViewModel(ItemsListViewModel.SelectedEntity);
             }
             catch (InvalidCastException)
             {
@@ -316,7 +267,7 @@ namespace MongoDbGuiTask1.ViewModel
             _database.AddCollection((string)collectionName);
             var collectionButton = new Hyperlink(new Run((string)collectionName));
             collectionButton.Click += CollectionExpanded;
-            TreeViewItem.Items.Add(collectionButton);
+            TreeViewItem?.Items.Add(collectionButton);
         }
 
         private void OnCreateDatabaseClick(object? ignorableParameter)

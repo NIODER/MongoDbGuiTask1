@@ -20,9 +20,6 @@
         <DataTemplate DataType="{x:Type vm:EmployeeViewModel}">
             <views:EmployeeView />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:ItemViewModel}">
-            <views:ItemView />
-        </DataTemplate>
         <DataTemplate DataType="{x:Type vm:OrderViewModel}">
             <views:OrderView />
         </DataTemplate>
@@ -59,7 +56,8 @@
         <StackPanel x:Name="RigthPanel" Grid.Row="1" Grid.Column="2" Margin="4,0,-5,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <TabControl MaxHeight="600" MinHeight="600">
                 <TabItem Header="Все документы" IsSelected="{Binding ListTabSelected}">
-                    <StackPanel>
+                    <ContentPresenter Content="{Binding ItemsListViewModel}" />
+                    <!--<StackPanel>
                         <ListBox ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" ItemsSource="{Binding Entities}" SelectedItem="{Binding SelectedEntity}">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseDoubleClick">
@@ -74,7 +72,7 @@
                         </ListBox>
                         <Button Command="{Binding PrevClick}" IsEnabled="{Binding PrevButtonActive}" Content="Назад"/>
                         <Button Command="{Binding NextClick}" IsEnabled="{Binding NextButtonActive}" Content="Далее"/>
-                    </StackPanel>
+                    </StackPanel>-->
                 </TabItem>
                 <TabItem Header="{Binding SingleHeader}" IsSelected="{Binding SingleTabSelected}">
                     <StackPanel>
