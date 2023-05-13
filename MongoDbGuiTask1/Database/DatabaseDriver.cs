@@ -1,8 +1,8 @@
 ﻿using Database.Entities;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System.Diagnostics;
 using System.Linq.Expressions;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Database
 {
@@ -28,6 +28,12 @@ namespace Database
             }
         }
 
+        public void CreateDatabase(string databaseName, List<string> collections)
+        {
+            var db = _client.GetDatabase(databaseName);
+            Task.WaitAll(collections.Select(col => db.CreateCollectionAsync(col)).ToArray());
+        }
+
         public string? GetDatabaseName(string connectionString)
         {
             return new MongoUrl(connectionString).DatabaseName;
@@ -36,6 +42,12 @@ namespace Database
         public List<string> GetDatabaseNames()
         {
             return _client.ListDatabaseNames().ToList();
+        }
+
+        public void AddCollection(string databaseName, string collectionName)
+        {
+            _client.GetDatabase(databaseName)
+                .CreateCollection(collectionName);
         }
 
         public List<string> GetCollectionNames(string databaseName)
@@ -54,12 +66,26 @@ namespace Database
             string databaseName,
             string collectionName,
             Expression<Func<DbEntity, bool>> filter,
-            int pageNumber = 0) where DbEntity : Entities.DbEntity => _client
+            int pageNumber = 0,
+            int pageSize = 10) where DbEntity : Entities.DbEntity => _client
                 .GetDatabase(databaseName)
                 .GetCollection<DbEntity>(collectionName)
                 .Find(filter)
-                .Skip(pageNumber * 10)
-                .Limit(10)
+                .Skip(pageNumber * pageSize)
+                .Limit(pageSize)
+                .ToList();
+
+        public List<DbEntity> GetEntitiesPage<DbEntity>(
+            string databaseName,
+            string collectionName,
+            FilterDefinition<DbEntity> filter,
+            int pageNumber = 0,
+            int pageSize = 10) where DbEntity : Entities.DbEntity => _client
+                .GetDatabase(databaseName)
+                .GetCollection<DbEntity>(collectionName)
+                .Find(filter)
+                .Skip(pageNumber * pageSize)
+                .Limit(pageSize)
                 .ToList();
 
         public void InsertOneEntity<DbEntity>(string databaseName, string collectionName, DbEntity entity) where DbEntity : Entities.DbEntity
@@ -81,18 +107,6 @@ namespace Database
             _client.GetDatabase(databaseName)
                 .GetCollection<DbEntity>(collectionName)
                 .FindOneAndDelete(dbEntity.ToBsonDocument());
-        }
-
-        public void AddCollection(string databaseName, string collectionName)
-        {
-            _client.GetDatabase(databaseName)
-                .CreateCollection(collectionName);
-        }
-
-        public void CreateDatabase(string databaseName, List<string> collections)
-        {
-            var db = _client.GetDatabase(databaseName);
-            Task.WaitAll(collections.Select(col => db.CreateCollectionAsync(col)).ToArray());
         }
     }
 }

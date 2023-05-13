@@ -1,18 +1,22 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace Database.Entities
 {
     public abstract class DbEntity
     {
-        [BsonId]
+        public const string ID_PROPERTY = "id";
+
+        [BsonId, JsonPropertyName(ID_PROPERTY), JsonIgnore]
         public ObjectId Id { get; set; }
+
+        [BsonIgnore, JsonPropertyName(ID_PROPERTY)]
+        public string IdString => Id.ToString();
+
+        [JsonIgnore]
         public abstract string Shortcut { get; }
+
         public abstract bool IsDefault();
     }
 }
